@@ -423,6 +423,31 @@
 
     <!-- APPLICATION JAVASCRIPT LOGIC -->
     <script>
+        // =========================================================================
+        // ☁️ EMBEDDED FIREBASE CONFIGURATION (FOR EASY FAMILY AUTO-SYNC)
+        // -------------------------------------------------------------------------
+        // Replace 'null' below with your firebaseConfig object so that ANY family
+        // member who opens the web link auto-connects to the shared database!
+        // Example:
+        // const EMBEDDED_FIREBASE_CONFIG = {
+        //     apiKey: "AIzaSy...",
+        //     authDomain: "your-app.firebaseapp.com",
+        //     projectId: "your-app-id",
+        //     storageBucket: "your-app.appspot.com",
+        //     messagingSenderId: "123456789",
+        //     appId: "1:123456789:web:..."
+        // };
+        // =========================================================================
+        const EMBEDDED_FIREBASE_CONFIG = 
+		{
+  apiKey: "AIzaSyAA5pA_sZb8a2enGLzq6Lh0WCDST3xKiT0",
+  authDomain: "pantry-audit.firebaseapp.com",
+  projectId: "pantry-audit",
+  storageBucket: "pantry-audit.firebasestorage.app",
+  messagingSenderId: "130332423359",
+  appId: "1:130332423359:web:96f47405def9337f37c20a"
+};
+
         // Global Modal Visibility Scope Helpers
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
@@ -503,13 +528,21 @@
             renderGroceryList();
             updateButtonStates();
 
-            // Auto-connect Firebase if credentials saved
-            const savedConfig = localStorage.getItem('pantry_firebase_config');
-            if (savedConfig) {
+            // Auto-connect Firebase: Check EMBEDDED_FIREBASE_CONFIG first, then localStorage
+            if (EMBEDDED_FIREBASE_CONFIG && typeof EMBEDDED_FIREBASE_CONFIG === 'object') {
                 try {
-                    initFirebaseSync(JSON.parse(savedConfig));
+                    initFirebaseSync(EMBEDDED_FIREBASE_CONFIG);
                 } catch (e) {
-                    console.error("Firebase auto-connect failed:", e);
+                    console.error("Embedded Firebase auto-connect failed:", e);
+                }
+            } else {
+                const savedConfig = localStorage.getItem('pantry_firebase_config');
+                if (savedConfig) {
+                    try {
+                        initFirebaseSync(JSON.parse(savedConfig));
+                    } catch (e) {
+                        console.error("Firebase auto-connect failed:", e);
+                    }
                 }
             }
         }
