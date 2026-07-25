@@ -724,7 +724,11 @@ const firebaseConfig = {
                             </div>
                         </td>
                         <td class="p-3">
-                            <input type="number" step="${step}" min="0" value="${item.need}" onchange="updateQty('${item.id}', 'need', this.value)" class="w-16 px-1.5 py-0.5 text-center font-bold border rounded-lg bg-transparent border-gray-200 dark:border-gray-700 focus:outline-none">
+                            <div class="flex items-center gap-1">
+                                <button onclick="adjustQty('${item.id}', -${step}, 'need')" class="custom-qty-btn w-6 h-6 rounded-lg font-bold border border-gray-200 dark:border-gray-700 flex items-center justify-center transition">-</button>
+                                <input type="number" step="${step}" min="0" value="${item.need}" onchange="updateQty('${item.id}', 'need', this.value)" class="w-16 px-1.5 py-0.5 text-center font-bold border rounded-lg bg-transparent border-gray-200 dark:border-gray-700 focus:outline-none">
+                                <button onclick="adjustQty('${item.id}', ${step}, 'need')" class="custom-qty-btn w-6 h-6 rounded-lg font-bold border border-gray-200 dark:border-gray-700 flex items-center justify-center transition">+</button>
+                            </div>
                         </td>
                         <td class="p-3 font-bold text-gray-500">
                             <span class="px-2 py-0.5 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-[11px]">${escapeHtml(item.unit)}</span>
@@ -782,12 +786,12 @@ const firebaseConfig = {
                 renderTagTabs();
             }
         }
-
-        function adjustQty(id, delta) {
+        function adjustQty(id, delta, field = 'stock') {
             const item = state.items.find(i => i.id === id);
             if (!item) return;
-            let val = parseFloat((item.stock + delta).toFixed(2));
-            item.stock = Math.max(0, val);
+            let currentVal = item[field] || 0;
+            let val = parseFloat((currentVal + delta).toFixed(2));
+            item[field] = Math.max(0, val);
             saveStateLocally();
             renderTable();
             if (state.activeWindow === 'grocery') renderGroceryList();
