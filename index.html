@@ -699,6 +699,15 @@ const firebaseConfig = {
                 const isFractionalUnit = item.unit === 'Kg' || item.unit === 'L';
                 const step = isFractionalUnit ? 0.1 : 1;
 
+                let warningIcon = '';
+                if (item.stock < item.need) {
+                    if (item.stock === 0) {
+                        warningIcon = `<span title="Out of stock! (0 ${escapeHtml(item.unit)})" class="inline-flex items-center text-red-500 shrink-0"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg></span>`;
+                    } else {
+                        warningIcon = `<span title="Low stock! (${item.stock} / ${item.need} ${escapeHtml(item.unit)})" class="inline-flex items-center text-orange-500 shrink-0"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg></span>`;
+                    }
+                }
+
                 return `
                     <tr class="custom-table-row border-b border-gray-100 dark:border-gray-800 transition ${isSelected ? 'selected-row' : ''}">
                         <td class="p-3 text-center">
@@ -706,6 +715,7 @@ const firebaseConfig = {
                         </td>
                         <td class="p-3 font-semibold food-item-title">
                             <div class="flex items-center gap-1.5">
+                                ${warningIcon}
                                 <span id="itemNameSpan_${item.id}">${escapeHtml(item.name)}</span>
                                 <button onclick="enableInlineNameEdit('${item.id}')" class="text-gray-400 hover:text-amber-500 text-xs" title="Edit Name">✏️</button>
                             </div>
